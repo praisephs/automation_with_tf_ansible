@@ -28,3 +28,32 @@ variable "do_token" {
   sensitive   = true
 }
 
+variable "ssh_key" {
+  description = "The SSH key to create the droplet"
+  type        = string
+  
+}
+
+variable "ssh_key_name" {
+  description = "The SSH key name to retrieve the droplet"
+  type        = string
+  
+}
+variable "domain_name" {
+  description = "The domain name to create."
+  type        = string
+  default     = "test-cerebro.ng"
+}
+
+variable "a_records" {
+  description = "List of A records to add to the domain."
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = [
+    { name = "uyi", value = "162.243.89.221" },
+    { name = "uyi2", value = "162.243.89.221" }
+  ]
+}
+

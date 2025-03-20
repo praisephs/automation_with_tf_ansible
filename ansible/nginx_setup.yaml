@@ -1,0 +1,75 @@
+---
+- name: Configure Nginx for Hosted Domains
+  hosts: web-vm
+  become: true
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Ensure Nginx is enabled and running
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Create Nginx config for uyi.cerebro.ng
+      copy:
+        dest: /etc/nginx/sites-available/uyi.cerebro.ng
+        content: |
+          server {
+              listen 80;
+              server_name uyi.cerebro.ng;
+              
+              root /var/www/uyi.cerebro.ng;
+              index index.html;
+              
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+      notify: Restart Nginx
+
+    - name: Create Nginx config for uyi2.cerebro.ng
+      copy:
+        dest: /etc/nginx/sites-available/uyi2.cerebro.ng
+        content: |
+          server {
+              listen 80;
+              server_name uyi2.cerebro.ng;
+              
+              root /var/www/uyi2.cerebro.ng;
+              index index.html;
+              
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+      notify: Restart Nginx
+
+    - name: Enable Nginx site configurations
+      file:
+        src: "/etc/nginx/sites-available/{{ item }}"
+        dest: "/etc/nginx/sites-enabled/{{ item }}"
+        state: link
+      loop:
+        - uyi.cerebro.ng
+        - uyi2.cerebro.ng
+      notify: Restart Nginx
+
+    - name: Test Nginx configuration
+      command: nginx -t
+      register: nginx_test
+      changed_when: nginx_test.rc != 0
+
+    - name: Display Nginx test results
+      debug:
+        var: nginx_test.stdout_lines
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+
