@@ -1,1 +1,25 @@
 terraform.tfvars
+
+# Ignore Terraform state and config files
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+crash.log
+
+# Ignore Ansible inventory, vars, and sensitive data (if any)
+ansible/
+
+# Ignore IDE/editor files
+.vscode/
+*.swp
+*.swo
+*.bak
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore logs
+*.log
+
