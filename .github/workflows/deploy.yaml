@@ -31,7 +31,7 @@ jobs:
         run: terraform plan -var "do_token=${{ secrets.DO_TOKEN }}" -var "ssh_key=${{ secrets.SSH_KEY_NAME }}"
   
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var "do_token=${{ secrets.DO_TOKEN }}" -var "ssh_key=${{ secrets.SSH_KEY_NAME }}"
+        run: terraform apply -auto-approve -var "do_token=${{ secrets.DO_TOKEN }}" -var "ssh_key_name=${{ secrets.SSH_KEY_NAME }}"
 
       # - name: Terraform Apply
       #   run: terraform apply -auto-approve
