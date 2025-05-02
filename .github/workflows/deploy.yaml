@@ -27,8 +27,14 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Plan
+        run: terraform plan -var "do_token=${{ secrets.DO_TOKEN }}" -var "ssh_key=${{ secrets.SSH_KEY_NAME }}"
+  
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var "do_token=${{ secrets.DO_TOKEN }}" -var "ssh_key=${{ secrets.SSH_KEY_NAME }}"
+
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve
 
       - name: Ansible Playbook - Install Nginx + SSL
         run: |
