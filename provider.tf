@@ -8,10 +8,10 @@ terraform {
 }
 
 provider "digitalocean" {
-  token = var.do_token
+  #token = var.do_token
 }
 
 data "digitalocean_ssh_key" "terraform" {
-  name = "ssh_uyi"
+  name = "ssh_uyi_new"
 }
 
