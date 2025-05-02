@@ -1,0 +1,61 @@
+# ---
+# - name: Install Nginx on remote server
+#   hosts: droplets
+#   become: true  # Run commands with sudo
+#   tasks:
+#     - name: Update apt cache
+#       apt:
+#         update_cache: yes
+
+#     - name: Install Nginx
+#       apt:
+#         name: nginx
+#         state: present
+
+---
+- name: Install Nginx and configure SSL with Certbot
+  hosts: droplets
+  become: true
+
+  vars:
+    domain_name: uyi.cerebro.ng  # Replace with your actual domain
+    email: uyioboite@gmail.com  # Replace with your email for Let's Encrypt
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Install Certbot and python3-certbot-nginx
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+
+    - name: Obtain SSL certificate with Certbot
+      shell: >
+        certbot --nginx -n --agree-tos --redirect
+        --email {{ email }}
+        -d {{ domain_name }}
+
+    - name: Ensure Certbot auto-renewal is enabled
+      cron:
+        name: "Certbot renew"
+        job: "certbot renew --quiet"
+        minute: "0"
+        hour: "3"
+
+    - name: Show final output with domain and server IP
+      debug:
+        msg: |
+          ✅ Nginx is installed and SSL is configured!
+          🔗 Visit your domain: uyi.cerebro.ng
+          🌐 Server IP: 107.170.52.212
+    
+
