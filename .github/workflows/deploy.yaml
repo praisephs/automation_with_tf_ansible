@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TF_VAR_do_token: ${{ secrets.DO_TOKEN }}
-      TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      DO_TOKEN: ${{ secrets.DO_TOKEN }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_KEY_NAME: ${{ secrets.SSH_KEY_NAME }}
 
     steps:
       - name: Checkout repo
