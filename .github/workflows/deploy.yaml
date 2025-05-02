@@ -1,45 +1,38 @@
-name: Provision and Configure Server
+name: Terraform + Ansible CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch: 
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     env:
-      ANSIBLE_HOST_KEY_CHECKING: False
+      TF_VAR_do_token: ${{ secrets.DO_TOKEN }}
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.6.6
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
 
-    - name: Terraform Init & Apply
-      run: |
-        terraform init
-        terraform apply -auto-approve
+      - name: Terraform Init
+        run: terraform init
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
 
-    - name: Install Ansible
-      run: |
-        pip install ansible
+      - name: Ansible Playbook - Install Nginx + SSL
+        run: |
+          sudo apt update && sudo apt install -y ansible
+          ansible-playbook -i inventory.ini install_nginx.yaml
 
-    - name: Add SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-
-    - name: Run Ansible Playbook
-      run: |
-        ansible-playbook -i inventory.ini install_nginx.yaml
+      - name: Print Deployment URL
+        run: |
+          echo "✅ Deployed! Access the app at: https://uyi.cerebro.ng or http://${{ steps.get_ip.outputs.IP }}"
